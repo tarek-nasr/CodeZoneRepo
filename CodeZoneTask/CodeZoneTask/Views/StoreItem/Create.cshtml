@@ -1,0 +1,73 @@
+﻿@model CodeZoneTask.Models.StoreItem
+
+<div class="container">
+    <h2>Create Store Item</h2>
+    <form asp-action="Create" class="needs-validation" novalidate>
+        <div class="form-group">
+            <label asp-for="StoreID" class="control-label"></label>
+            <select asp-for="StoreID" class="form-control" asp-items="ViewBag.StoreID" id="StoreID" required></select>
+            <div class="invalid-feedback">Please select a store.</div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ItemID" class="control-label"></label>
+            <select asp-for="ItemID" class="form-control" asp-items="ViewBag.ItemID" id="ItemID" required></select>
+            <div class="invalid-feedback">Please select an item.</div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Quantity" class="control-label">Insert Quantity</label>
+            <input asp-for="Quantity" class="form-control" value="0" required />
+            <div class="invalid-feedback">Please enter a quantity.</div>
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Quantity" class="control-label">Current Quantity</label>
+            <input asp-for="Quantity" class="form-control" id="Quan" disabled />
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Add" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function updateQuantity() {
+                var storeID = $('#StoreID').val();
+                var itemID = $('#ItemID').val();
+                if (storeID && itemID) {
+                    $.getJSON('@Url.Action("GetQuantity", "StoreItem")', { storeID: storeID, itemID: itemID }, function (data) {
+                        $('#Quan').val(data);
+                    });
+                } else {
+                    $('#Quan').val(0);
+                }
+            }
+
+            $('#StoreID, #ItemID').change(function () {
+                updateQuantity();
+            });
+
+            updateQuantity();
+        });
+
+      
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+}
